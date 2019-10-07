@@ -12,27 +12,19 @@ subcontext: ms2
 This lab is under construction. Proceed at own risk.
 {: .notice .notice-warning}
 
-In this lab, you define name bindings and corresponding constraints for MiniJava in NaBL2. The
-concepts you are going to use in NaBL2 are described in the following papers:
+In this lab, you define name bindings and corresponding constraints for MiniJava in Statix. The
+concepts you are going to use in Statix are described in the following papers:
 
-1. P. Neron, A. Tolmach, E. Visser, G. Wachsmuth: [A Theory of Name Resolution](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2015-001.pdf), ESOP 2015
-2. H. van Antwerpen, P. Neron, A. Tolmach, E. Visser, G. Wachsmuth: [A Constraint Language for Static Semantic Analysis based on Scope Graphs](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2015-012.pdf), PEPM 2016
-
-Documentation for NaBL2 can be found online at
-[NaBL2 Documentation](https://spoofax.readthedocs.io/en/latest/source/langdev/meta/lang/nabl2/index.html). For
-a complete overview of the language, use the
-[NaBL2 Language Reference](https://spoofax.readthedocs.io/en/latest/source/langdev/meta/lang/nabl2/reference.html). The
-[NaBL2 Configuration](https://spoofax.readthedocs.io/en/latest/source/langdev/meta/lang/nabl2/configuration.html) documentation
-describes how to configure logging and inspect the results of analysis.
-{: .notice .notice-info}
+1. H. van Antwerpen, C. B. Poulsen, A. Rouvoet, E. Visser: [Scopes as Types](https://researchr.org/publication/AntwerpenPRV18), OOPSLA 2018
+2. P. Neron, A. Tolmach, E. Visser, G. Wachsmuth: [A Theory of Name Resolution](https://researchr.org/publication/TUD-SERG-2015-001), ESOP 2015
+3. H. van Antwerpen, P. Neron, A. Tolmach, E. Visser, G. Wachsmuth: [A Constraint Language for Static Semantic Analysis based on Scope Graphs](https://researchr.org/publication/AntwerpenNTVW16), PEPM 2016
 
 ## Overview
 
 ### Objectives
 
 Specify name analysis for MiniJava in
-[NaBL2](http://metaborg.org/en/latest/source/langdev/meta/lang/nabl2/index.html), by specifying a
-scope graph and resolution constraints. The specification should include:
+Statix by specifying a scope graph and resolution constraints. The specification should include:
 
 1. Scope graph constraints for
   * class declarations
@@ -49,8 +41,6 @@ scope graph and resolution constraints. The specification should include:
 3. Constraints for
   * duplicate definitions of classes, fields, parameters, and variables
   * field, parameter, and variable declarations that hide parameter or field declarations
-4. Properties on
-  * variable declarations to indicate whether they are fields, parameters, or local variables
 
 ### Submission
 
@@ -99,30 +89,23 @@ how to create the `assignment-5-develop` branch from your previous work.
 
 ### Constraint generation rules
 
-Name binding is specified as constraint generation rules in `.nabl2` files. NaBL2 files must go in
-the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.nabl2` starts as:
+Name binding is specified through constraint generation rules in a `.stx` file. Statix files must go in
+the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
 
 ```
 module analysis/minijava
 ```
 
-The rules match on an AST constructor, and get one or more scopes as an argument. The initial
-project contains an `init` rule that creates the initial global scope. The general schema for these
-rules looks like this:
+The constraint generating rules are recursive predicates that match on fragments of the 
+AST of the program under analysis. Each rule is defined by a type signature that 
+describes what the rule matches on (and what it returns), and implemented through one or more rule instantiations. The bodies of the rule instantiations contain the constraints that need 
+to be solved whenever a rule is called.
 
-```
-rules
+Multiple constraints within a rule body are separated by commas. The constraint `true` always succeeds. Inspect the
+signature files in `reference/src-gen/signatures/` for the available constructors that can be matched on with rules.
 
-    [[ <Pattern> ^ (<{Scope ","}*>) ]] :=
-        <Constraint>.
-```
-
-Multiple constraints are separated by commas. The constraint `true` always succeeds. Inspect the
-signature files in `reference/src-gen/signatures/` for the available constructors.
-
-There can only be **one** rule that matches on a certain constructor. It is possible and recommended
-to split the rules over multiple files.
-{: .notice .notice-warning}
+The initial
+project contains a `programOk` rule that matches the root AST node of a Mini Java program. 
 
 There is no implicit traversal of the AST. This means the rules should be complete: there must be a
 rule for every constructor you want to visit.
@@ -180,31 +163,23 @@ current scope `s`, and passes it as the current scope in the recursive call for 
 ```
 rules
 
-    [[ Method(_, _, _, _, _, e) ^ (s) ]] :=
+    rule(s, AstNode(e)) :- {s'}
         new s',
-        s' ---> s,
-        [[ e ^ (s') ]].
+        s' -P-> s,
+        rule(e).
 ```
 
 The term in the recursive call **must** be a variable from your match pattern.
 {: .notice .notice-warning}
 
-There are some default rules to traverse a list of terms. For example to traverse all class
-definition in a program, you can write:
+Rules matching on single terms can be lifted in order to traverse a list of such terms. For example, for a rule that traverses the list of all class
+declarations in a program, you can write:
 
 ```
 rules
-
-    [[ Program(_,cs) ^ (s) ]] :=
-        // ...
-        Map1 [[ cs ^ (s) ]].
+    classesOk : scope * ClassDecl 
+    classesOk maps classOk(*, list(*))
 ```
-
-The rule `Map1` takes one scope parameter. There is also a rule `Map2` that takes two
-parameters. These rules are implemented in NaBL2, so it is possible to write such named rules
-yourself as well. See
-[stdlib/map.nabl2](https://github.com/metaborg/nabl/blob/master/nabl2.runtime/trans/nabl2/runtime/stdlib/map.nabl2)
-for the implementation of these rules.
 
 #### Importing scopes by name
 
@@ -238,66 +213,12 @@ rules
         Var{x} |-> d.
 ```
 
-#### Custom errors and warnings
+#### Name hiding
 
-It is possible to control the errors and warnings that are generated if a constraint fails.
-
-```
-rules
-
-    [[ VarRef(x) ^ (s) ]] :=
-        Var{x} -> s,
-        Var{x} |-> d | <Severity> <Message> <Location>.
-```
-
-The severity is one of `error`, `warning`, or `note`. The message is optional and can be 1) a
-literal string `"variable not found"`, or 2) a formatted message `$[Cannot find variable [x]]`.
-The default error location is the matched term, but it can be specified explicitly using `@t`,
-where `t` is a variable from your match pattern.
-
-#### Sets of names
-
-MiniJava requires errors and warnings in a few cases where hiding occurs. Fields are not allowed to
-hide fields in super classes. Parameters are allowed to hide fields and local variables are allowed
-to hide fields, but they get a warning if they do. MiniJava does not allow a parameter to have the
+MiniJava requires errors in a few cases where hiding occurs. Fields are not allowed to
+hide fields in super classes. Parameters are not allowed to hide fields and local variables are not allowed
+to hide fields. MiniJava does also not allow a parameter to have the
 same name as a local variable in a method.
-
-The following constraints can be used to restrict the names that can appear in scopes:
-
-* `distinct <Nameset>` and `distinct/name <Nameset>`
-* `<Nameset> subseteq <Nameset>` and `<Nameset> subseteq/name <Nameset>`
-
-The constraint `<Nameset> seteq <Nameset>` is desugared to two `subseteq` constraints.
-
-The following sets of names are available (for a given scope `s`):
-
-* all declarations `D(<Scope>)/<Namespace>`,
-* all references `R(<Scope>)/<Namespace>`,
-* all (transitively) visible declarations `V(<Scope>)/<Namespace>`,
-* and all reachable (including shadowed) declarations `W(<Scope>)/<Namespace>`.
-
-For example, `D(s)/Var` would give all variable declarations in `s`.
-
-You can write expressions to get the set of names you are interested in, using the following operators:
-
-* union `(<Nameset> union <Nameset>)`,
-* intersection `(<Nameset> isect <Nameset>)`,
-* and set different `(<Nameset> minus <Nameset>)`.
-
-Note that sets of names behave like multisets. For example, `X diff Y` where `X` contains two `x`s
-and `Y` contains one `x` will result in a set with one `x`.
-
-Error messages on `subseteq` and `distinct` constraints can use two special keywords.  The position
-can be `@NAMES`, in which case the error will appear on the relevant names. In a formatted message
-`NAME` can be used to insert the name in the message.
-
-See the reference documentation for a more complete description of
-these constraints.
-{: .notice .notice-info}
-
-Note that if you use set expressions in your constraint, the order in which you do the operations
-can be important to get the error on the right name.
-{: .notice .notice-warning}
 
 #### Origin properties on variable declarations
 
@@ -328,23 +249,6 @@ signature
 ```
 
 The sort name is not important, but if you do not know what to use, use `Origin`.
-
-### Debugging
-It is possible to view the scope graph of a file for debugging purposes. First, you will have to
-setup the software that visualizes the graphs. This can be done as follows.
-
-* Install graphviz ([https://www.graphviz.org/download/](https://www.graphviz.org/download/))
-* Open Spoofax
-* In the menu, select Window, Preferences...
-* Select Dot, Graphviz
-* Set the location of the dot executable to the dot executable (which is located where you installed
-graphviz).
-
-Now, if you open up any MiniJava file, you can select Spoofax, NaBL2 Analysis, Debug file scope
-graph (DOT). You can then visualize the scope graph by clicking on the button as
-indicated in the picture.
-
-![Button to visualize the scope graph](../../assets/images/scope-graph-show.png)
 
 ### Challenge
 
