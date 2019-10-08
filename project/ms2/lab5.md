@@ -87,131 +87,167 @@ You continue with your work from the previous assignment. See the
 [Git documentation](/documentation/git.html#continue-from-previous-assignment) on
 how to create the `assignment-5-develop` branch from your previous work.
 
-### Constraint generation rules
+### Typing rules
 
-Name binding is specified through constraint generation rules in a `.stx` file. Statix files must go in
+Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
 the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
 
 ```
 module analysis/minijava
 ```
 
-The constraint generating rules are recursive predicates that match on fragments of the 
-AST of the program under analysis. Each rule is defined by a type signature that 
-describes what the rule matches on (and what it returns), and implemented through one or more rule instantiations. The bodies of the rule instantiations contain the constraints that need 
-to be solved whenever a rule is called.
+Type checking is specified using predicates, whose rules determine which programs are well-formed and which are not.
+The rules typically match on the syntactic constructs of the language.
+The rule body specifies the premises that must hold for the construct to be well-formed.
+Each predicate is has a signature that describes the types of the input arguments.
+Predicates and rules are defined in the `rules` section of the specification.
+For example, the signature and two of its rules of the predicate to check expressions, looks like this:
 
-Multiple constraints within a rule body are separated by commas. The constraint `true` always succeeds. Inspect the
-signature files in `reference/src-gen/signatures/` for the available constructors that can be matched on with rules.
+```
+rules
 
-The initial
-project contains a `programOk` rule that matches the root AST node of a Mini Java program. 
+   expOk : scope * Exp                           // signature for predicate with two parameters
+   
+   expOk(s, Call(e, x, args)) :- {y z} PREMISES. // rule for the case Call (end in a dot!)
 
-There is no implicit traversal of the AST. This means the rules should be complete: there must be a
-rule for every constructor you want to visit.
-{: .notice .notice-warning}
+   expOk(s, True()).                             // rule for the case True
+```
+
+The signature specifies that the predicate `expOk` takes two parameters.
+The first argument must be of the built-in type `scope`, the second of the type `Exp`, which comes from the signature of the language.
+This example shows two forms for predicate rules.
+The first (for `Call`) is the full form, matches on the `Call` construct in the head of the rule (the part before `:-`), defines local variable `y` and `z`, followed by a body containing comma-separated premises.
+The second is an abbreviated form for rules that have no premises.
+Any variables that appear in the head are bound in the body of the rule.
+Furthermore, extra local variables are declared between curly braces at the beginning of the body.
+
+Rules of one predicate must not overlap, that is, they must not match on the same constructs as other rules.
+Overlapping rules are statically detected, and Statix gives an error on those.
+{: .notice .notice-info}
+
+There are several premises (that we also call constraints), that can be part of the rule body.
+The simplest are `true` (which always succeeds), `false`, which never succeeds.
+For example, the abbreviated rule is equal to `expOk(s, True()) :- true.`
+
+It is also possible to use predicates as premises.
+For example, the `Call` rule may enforce well-formedness of the nested expression by having a premise `expOk(s, e)`.
+
+The initial project contains a `programOk` rule that matches the root AST node of a Mini Java program.
+Type checking proceeds from this predicate, by matching rules against arguments, and unfolding to the premises of matching rules.
+If all premises can eventually be resolved, the program is considered well-formed.
+
+For this lab you have to write predicate rules for all the constructs in the language. Check the signature you have to use in the Statix file in the template project.
+Note that the grammar injections are explicit in this signature, which means you have to wrap some constructors in the injection constructor.
+
+### Terms and Sorts
+
+... term and pattern syntax ...
+
+... sorts ...
 
 ### Name Binding
 
-#### Namespaces
+#### Scopes and Edges
 
-Different kinds of names can be kept separate by putting them in a different *namespace*. For
-example, variables live in the `Var` namespace. A name with a namespace and an (implicit) AST
-position is called an *occurrence*, and written as `Var{x}`, where `Var` is the namespace, and `x`
-the name.
+Scope graph is constructed from scopes and edges using the predicates:
 
-Namespaces are declared as part of the name of the name resolution parameters. Put the following in
-one of your `*.nabl2` files:
+* `new s`
+* `s -l-> s`
+
+The labels must be defined in the signature,
 
 ```
 signature
-
-    name resolution
-        namespaces Var // ... space separated list of namespaces ...
+  name-resolution
+    labels // ... space separated list of labels ...
 ```
 
-For this assignment it is required to use the `Var` namespace for fields, method parameters, and
-local variables.
-{: .notice .notice-warning}
+#### Declarations in the Scope Graph
 
-#### Declarations and references
+Declarations are written as occurrences, which combine a name with a namespace and its AST position.
 
-References and declarations are specified as occurrences with arrows going to and from scopes
-respectively. Reference resolution can be thought of as finding a path in the scope graph from the
-reference to a declaration with the same name. For example the rules for variable declarations and
-references, both in the current scope, look like this:
+Namespaces are declared in the signature, and specify the type of the name.
+In this lab, the names should always be `ID`s, but in general they can be arbitrary terms.
 
 ```
-rules
-
-    [[ Var(_,x) ^ (s) ]] :=
-        Var{x} <- s.
-
-    [[ VarRef(x) ^ (s) ]] :=
-        Var{x} -> s.
+signature
+  namespaces
+    Var : ID
 ```
 
-Note that specifying declarations and references like this does not imply that references must
-resolve. To ensure this, you must add resolution constraints, described below.
-
-#### Introducing new scopes
-
-New scopes can be created and passed down to children in the AST using `new` and recursive calls to
-the constraint generation rules. The following example creates a new scope `s'`, adds an edge to the
-current scope `s`, and passes it as the current scope in the recursive call for the subterm `e`.
+Declarations are added to the scope graph using `s -> OCCURRENCE`.
+This adds it to the implicit relation `decl : occurrence`.
+Relations may be defined of extra information has to be associated with the occurrence.
+For example, one could define a relation that associates a scope with an occurrence:
 
 ```
-rules
-
-    rule(s, AstNode(e)) :- {s'}
-        new s',
-        s' -P-> s,
-        rule(e).
+signature
+  relations
+    scopeOf : occurrence -> scope
 ```
 
-The term in the recursive call **must** be a variable from your match pattern.
-{: .notice .notice-warning}
+In this case, one adds data like `s -> OCCURRENCE with scopeOf SCOPE`.
 
-Rules matching on single terms can be lifted in order to traverse a list of such terms. For example, for a rule that traverses the list of all class
-declarations in a program, you can write:
+#### Resolving Names
 
-```
-rules
-    classesOk : scope * ClassDecl 
-    classesOk maps classOk(*, list(*))
-```
+Names are resolved using `OCCURRENCE in s |-> ps` in scope `s` to paths `ps`.
+In this form, it resolves in the `decl` relation.
+The result `ps` contains a list of pairs of `path`s and the data from the relation.
+To match on a single variable, e.g., you could write `Var{x@-} in s |-> [(_, Var{x'@_})]`, where `x'` is bound to the name of the original declaration.
 
-#### Importing scopes by name
+To resolve in another relation, e.g. `scopeOf OCCURRENCE in s |-> _`.
 
-Scopes can also be imported by name, instead of using parent edges. Imports always require a pair of
-constraints, one that associates a name with a scope, and one the imports a reference into a
-scope. The constraints are written as:
-
-* `<Occurrence> ===> <Scope>` associates the scope with the given declaration.
-* `<Occurrence> <=== <Scope>` imports a reference into the scope. The declarations in the associated scope
-  of the resolved reference are now visible in the importing scope.
-
-The references and declarations used in the previous two constraints still need to be introduced
-explicitly in the graph.
-{: .notice .notice-warning}
-
-### Constraints
-
-#### Name resolution
-
-A reference in the scope graph must resolve to a declaration. This is specified with a resolution
-constraint. Usually the right hand side of the constraint is a variable that will get the value of
-the declaration that the reference refers to. In the following example, we capture the declaration
-in the variable `d`. Note that `d` here is a *meta-variable*, that is, it is a variable in the rule,
-not a variable in MiniJava.
+The well-formedness and disambiguation of resolution are controlled in the signature per namespace.
 
 ```
-rules
-
-    [[ VarRef(x) ^ (s) ]] :=
-        Var{x} -> s,
-        Var{x} |-> d.
+signature
+  name-resolution
+    resolve Ns filter REGEX min LABELORD
 ```
+
+#### Editor Resolution
+
+To enable name resolution in the editor, we have to link references to their declarations.
+This is done with the `ref` property on AST nodes, as `x.ref := x'`, where `x` is the reference name, and `x'` the name matched from the declaration in the query result.
+
+#### Queries
+
+Queries allow us to ask more powerful questions.
+The resolution premises from the previous section are all explicated to full queries.
+To see the full query form, use `Syntax > Format Normalized` on the specification.
+The full query format is
+
+```
+query REL filter REGEX and MATCH min LABELORD and SHADOW in SCOPE |-> RESULT
+```
+
+Relation can be a relation name, `decl`, or `()` to only look at the reachable scopes.
+
+Regex specifies well-formed paths ...
+The well-formedness is a regular expression on path labels, that rules out paths that do not match
+it. In the default case, it means that after an import, you cannot resolve in a parent scope
+anymore. The regular expressions on labels have the following syntax:
+
+* `e` is the empty string
+* `0` is the empty language (i.e., it matches nothing)
+* `<Label>` is a literal label
+* `~<Regexp>` is the complement (e.g., `~0` matches anything)
+* `<Regexp>*` is the closure (i.e., match zero or more)
+* `<Regexp> <Regexp>` is concatenation (e.g., `P I` matches one parent edge followed by an
+  import)
+* `<Regexp> | <Regexp>` is a logical or (e.g., `P | I` matches a parent or an import edge)
+* `<Regexp> & <Regexp>` is a logical and (i.e., both expressions must match)
+* `(<Regexp>)` brackets can be used for grouping
+
+Match specifies which data in the relation we want to match.
+E.g., to match on a name `x`, the match is an anonymous rule `{ d :- d == Var{x@_} }` which is tested against all the declarations `d` that are reachable.
+
+The label order ...
+
+The shadowing determines which declarations shadow each other.
+If it is `true`, all declarations shadow each other, and we only get the declarations reached via the shortest path.
+If `false`, none, which could be used to find all reachable declarations.
+Or, something like `{ Var{x@_}, Var{y@_} }` specifies that we only shadow between things with the same name.
 
 #### Name hiding
 
@@ -219,36 +255,6 @@ MiniJava requires errors in a few cases where hiding occurs. Fields are not allo
 hide fields in super classes. Parameters are not allowed to hide fields and local variables are not allowed
 to hide fields. MiniJava does also not allow a parameter to have the
 same name as a local variable in a method.
-
-#### Origin properties on variable declarations
-
-Properties can be set on declarations with a constraint `<Namespace>{<Term>}.<NAME> := <Term>`. In
-this lab you must set a property `origin` on `Var` declarations.
-
-* Fields must get an origin `Field()`
-* Parameters must get an origin `Param()`
-* Local variables must get an origin `Local()`
-
-It is important for grading to use these exact property and constructor names.
-{: .notice .notice-warning}
-
-You will need to define these constructors by adding a `signature` section of a Stratego file,
-e.g. `trans/analysis.str`. Stratego signatures define new constructors that you can use, and are
-written as:
-
-```
-module analysis
-
-// ...
-
-signature
-  constructors
-    <ConstructorName> : <SortName>
-
-// ...
-```
-
-The sort name is not important, but if you do not know what to use, use `Origin`.
 
 ### Challenge
 
@@ -269,48 +275,3 @@ class Bar extends Foo {
 }
 ```
 
-The declaration of `Bar.m()` should introduce a reference to `Foo.m()`. Of course just introducing a
-reference in the parent scope is not enough, because this will result in an error for `Foo.m()`
-which does not override any method. The challenge is to create a reference that resolves to the
-overridden method if it exists, and to its own method declaration otherwise.
-
-It is possible to encode this logic in the scope graph by modifying edge labels, the specificity
-order of labels, and the well-formedness regular expression on paths. By default the parameters for
-name binding are the following:
-
-```
-signature
-
-  name resolution
-
-    labels
-      P I
-
-    order
-      D < I,
-      D < P,
-      I < P
-
-    well-formedness
-      P* I*
-```
-
-The label `P` is the default label for edges between scope. This can be written explicitly with the
-constraint `s' -P-> s`. The label `I` is the default label for imports, and can also be written
-explicitly as `d =I=> s` and `s =I=> r`. *Note that scopes can have multiple outgoing edges, which
-can have different labels.*
-
-The well-formedness is a regular expression on path labels, that rules out paths that do not match
-it. In the default case, it means that after an import, you cannot resolve in a parent scope
-anymore. The regular expressions on labels have the following syntax:
-
-* `e` is the empty string
-* `0` is the empty language (i.e., it matches nothing)
-* `<Label>` is a literal label
-* `~<Regexp>` is the complement (e.g., `~0` matches anything)
-* `<Regexp>*` is the closure (i.e., match zero or more)
-* `<Regexp> <Regexp>` is concatenation (e.g., `P I` matches one parent edge followed by an
-  import)
-* `<Regexp> | <Regexp>` is a logical or (e.g., `P | I` matches a parent or an import edge)
-* `<Regexp> & <Regexp>` is a logical and (i.e., both expressions must match)
-* `(<Regexp>)` brackets can be used for grouping
