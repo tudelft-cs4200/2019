@@ -89,6 +89,8 @@ how to create the `assignment-5-develop` branch from your previous work.
 
 ### Typing rules
 
+**You have to write rules for all language constructs**
+
 Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
 the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
 
@@ -141,13 +143,23 @@ Note that the grammar injections are explicit in this signature, which means you
 
 ### Terms and Sorts
 
+**AST, names, types are all terms, Statix is fully typed**
+
 ... term and pattern syntax ...
 
 ... sorts ...
 
 ### Name Binding
 
+Modeling name binding involves the following:
+- Creating scopes and connecting them with edges
+- Adding type, method, field, and variable declarations in the scope graph
+- Resolving type, field, and variable references and connecting resolution results to the AST
+- More sophisticated checks like overriding, duplicate names, hiding
+
 #### Scopes and Edges
+
+**Construct the scope graph corresponding to the rules**
 
 Scope graph is constructed from scopes and edges using the predicates:
 
@@ -163,6 +175,8 @@ signature
 ```
 
 #### Declarations in the Scope Graph
+
+**Add declarations for the different kinds of names**
 
 Declarations are written as occurrences, which combine a name with a namespace and its AST position.
 
@@ -190,6 +204,8 @@ In this case, one adds data like `s -> OCCURRENCE with scopeOf SCOPE`.
 
 #### Resolving Names
 
+**Resolve references**
+
 Names are resolved using `OCCURRENCE in s |-> ps` in scope `s` to paths `ps`.
 In this form, it resolves in the `decl` relation.
 The result `ps` contains a list of pairs of `path`s and the data from the relation.
@@ -207,10 +223,44 @@ signature
 
 #### Editor Resolution
 
+**Connecting resolution to the AST**
+
 To enable name resolution in the editor, we have to link references to their declarations.
 This is done with the `ref` property on AST nodes, as `x.ref := x'`, where `x` is the reference name, and `x'` the name matched from the declaration in the query result.
 
-#### Queries
+#### Duplicate definitions
+
+**Checking duplicate definitions**
+
+#### Name hiding
+
+MiniJava requires errors in a few cases where hiding occurs. Fields are not allowed to
+hide fields in super classes. Parameters are not allowed to hide fields and local variables are not allowed
+to hide fields. MiniJava does also not allow a parameter to have the
+same name as a local variable in a method.
+
+TODO: Making warnings
+
+### Overriding
+
+**Checking overriding**
+
+In lab 7 we need to test that an overriding method has the same type as the overridden method in the
+parent class. For every method declaration, we want to introduce a reference, that resolves to its
+overridden method. For example, consider the following situation:
+
+```
+class Foo {
+    public int m() {
+        return 1;
+    }
+}
+class Bar extends Foo {
+    public int m() {
+        return 1;
+    }
+}
+```
 
 Queries allow us to ask more powerful questions.
 The resolution premises from the previous section are all explicated to full queries.
@@ -248,30 +298,4 @@ The shadowing determines which declarations shadow each other.
 If it is `true`, all declarations shadow each other, and we only get the declarations reached via the shortest path.
 If `false`, none, which could be used to find all reachable declarations.
 Or, something like `{ Var{x@_}, Var{y@_} }` specifies that we only shadow between things with the same name.
-
-#### Name hiding
-
-MiniJava requires errors in a few cases where hiding occurs. Fields are not allowed to
-hide fields in super classes. Parameters are not allowed to hide fields and local variables are not allowed
-to hide fields. MiniJava does also not allow a parameter to have the
-same name as a local variable in a method.
-
-### Challenge
-
-In lab 7 we need to test that an overriding method has the same type as the overridden method in the
-parent class. For every method declaration, we want to introduce a reference, that resolves to its
-overridden method. For example, consider the following situation:
-
-```
-class Foo {
-    public int m() {
-        return 1;
-    }
-}
-class Bar extends Foo {
-    public int m() {
-        return 1;
-    }
-}
-```
 
