@@ -182,8 +182,11 @@ signature // expressions
 ```
 
 For this lab you have to write predicate rules for *all* the constructs in the 
-language, which also means you have to explicitly match on the injection constructors. 
-All the injection constructors you have to use are mentioned in the signature in the provided Statix file.
+language. If constructs are left uncovered by rules and then encountered in a 
+MiniJava program, Statix analysis will fail.
+This means you have to explicitly match on the injection constructors. 
+All such injection constructors you have to use are mentioned in the signature 
+of the template Statix file.
 
 You can use the `Spoofax > Show AST` or `Spoofax > Show desugared AST` on a MiniJava file to see the the explicit injection constructors in the AST.
 {: .notice .notice-info}
