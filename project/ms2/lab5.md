@@ -106,11 +106,14 @@ For example, the signature of the predicate that checks expressions together wit
 ```
 rules
 
-   expOk : scope * Exp                           // signature for predicate with two parameters
+   expOk : scope * Exp                           
+   // signature for predicate with two parameters
    
-   expOk(s, Call(e, x, args)) :- {y z} PREMISES. // rule for the case Call (end in a dot!)
+   expOk(s, Call(e, x, args)) :- {y z} PREMISES. 
+   // rule for the case Call (end in a dot!)
 
-   expOk(s, True()).                             // rule for the case True
+   expOk(s, True()).                             
+   // rule for the case True
 ```
 
 The signature specifies that the predicate `expOk` takes two parameters.
@@ -121,7 +124,7 @@ The second is an abbreviated form for rules that have no premises.
 Any variables that appear in the head are bound in the body of the rule.
 Furthermore, extra local variables are declared between curly braces at the beginning of the body.
 
-Rules of one predicate must not overlap, that is, they must not match on the same constructs as other rules.
+Rules of one predicate must not overlap, that is, they must not match on the same constructs as other rules for the predicate.
 Overlapping rules are statically detected and Statix gives an error on those.
 {: .notice .notice-warning}
 
@@ -134,7 +137,15 @@ For example, the `Call` rule may enforce well-formedness of the nested expressio
 
 The initial project contains a predicate `programOk` with a rule that matches the root AST node of a Mini Java program.
 Type checking proceeds from this rule by matching rules against arguments and unfolding to the premises of matching rules.
-If all premises can eventually be resolved, the program is considered well-formed.
+If all premises can be resolved, the program is considered well-formed.
+The predicate that is invoked first in the analysis is specified in the 
+`trans/analysis.str` Stratego file which defines a strategy `str-editor-analyze`.
+
+```
+editor-analyze = stx-editor-analyze(
+  explicate-injections;desugar-all
+  |"statics", "programOk")
+```
 
 For this lab you have to write predicate rules for *all* the constructs in the 
 language. Note that the grammar injections are explicit in this signature 
@@ -209,7 +220,7 @@ In this case, a declaration is then defined using `s -> OCCURRENCE with scopeOf 
 ### Constraints
 #### Name resolution
 
-A reference in the scope graph must resolve to a declaration. This is specified with a premise in shape of a scope graph query. 
+A reference in the scope graph must resolve to a declaration. This is specified with a premise in the shape of a scope graph query. 
 To query for declarations (in the implicit `decl` relation), queries can be formulated as `OCCURRENCE in s |-> ps` which resolve an occurence in scope `s` to `ps`. The latter is a list of pairs of `path`s and the data from the relation (occurrences in this case). 
 
 As usual, the list of results `ps` can be pattern-matched on. For example, to match on a single variable declaration you could write `Var{x@-} in s |-> [(_, Var{x'@_})]`, where `x'` is bound to the name of the original declaration.
