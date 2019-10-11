@@ -60,12 +60,11 @@ The total number of points depends on how many test cases you pass in each of th
   * parameter declarations (6 points)
   * variable declarations and references (6 points)
   * scopes of program, classes, and methods (12 points)
-  * variable origins (3 points)
-* constraints (45 points)
+* constraints (55 points)
   * unresolved references (16 points)
   * duplicate definitions (20 points)
   * hiding variables and fields (9 points)
-* challenge (10 points)
+  * overriding (10 points)
 
 ### Early Feedback
 
