@@ -9,9 +9,6 @@ subcontext: ms2
 
 {% include _toc.html %}
 
-This lab is under construction. Proceed at own risk.
-{: .notice .notice-warning}
-
 In this lab, you define name bindings and corresponding constraints for MiniJava in Statix. The
 concepts you are going to use in Statix are described in the following papers:
 
