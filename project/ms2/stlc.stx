@@ -1,0 +1,103 @@
+module stlc // Static semantics of STLC
+
+signature
+
+  sorts ID = string                                  // x
+
+  sorts Exp constructors                             // e :=
+    Unit    : Exp                                    //    | unit
+    Num     : int -> Exp                             //    | n
+    Plus    : Exp * Exp -> Exp                       //    | e + e
+    Fun     : ID * TypeExp * Exp -> Exp              //    | fun (x : te) { e }
+    Var     : ID -> Exp                              //    | x
+    App     : Exp * Exp -> Exp                       //    | e e
+    Let     : list(Bind) * Exp -> Exp                //    | let b+ in e
+
+  sorts Bind constructors                            // b :=
+    Bind : ID * Exp -> Bind                          //    | x = e
+
+  sorts TypeExp constructors                         // te :=
+    UnitType : TypeExp                               //     | unit
+    NumType  : TypeExp                               //     | num
+    FunType  : TypeExp * TypeExp -> TypeExp          //     | te -> te
+
+  sorts Type constructors
+    UNIT  : Type
+    NUM   : Type
+    FUN   : Type * Type -> Type
+
+  relations
+    typeOfDecl : occurrence -> Type
+
+  namespaces
+    Var  : string
+
+  name-resolution
+    labels P
+    resolve Var filter P* min $ < P
+
+rules
+
+  programOK : Exp
+  programOK(e) :- {s T}
+    new s,
+    typeOfExp(s, e) == T.
+
+rules
+
+  typeOfExp : scope * Exp ->  Type
+
+  typeOfExp(s, Unit()) = UNIT().
+
+  typeOfExp(s, Num(_)) = NUM().
+
+  typeOfExp(s, Plus(e1, e2)) = NUM() :-
+    typeOfExp(s, e1) == NUM(),
+    typeOfExp(s, e2) == NUM().
+
+  typeOfExp(s, Fun(x, te, e)) = FUN(S, T) :- {s_fun}
+    typeOfTypeExp(s, te) == S,
+    new s_fun, s_fun -P-> s,
+    declareVar(s_fun, x, S),
+    typeOfExp(s_fun, e) == T.
+
+  typeOfExp(s, Var(x)) = resolveVar(s, x).
+
+  typeOfExp(s, App(e1, e2)) = T :- {S}
+    typeOfExp(s, e1) == FUN(S, T),
+    typeOfExp(s, e2) == S.
+
+  typeOfExp(s, Let(binds, e)) = T :- {s_let}
+    new s_let, s_let -P-> s,
+    letBindsOK(s, binds, s_let),
+    typeOfExp(s_let, e) == T.
+
+rules
+
+  letBindOK : scope * Bind * scope
+  letBindsOK maps letBindOK(*, list(*), *)
+
+  letBindOK(s, Bind(x, e), s_bnd) :-
+    declareVar(s, x, typeOfExp(s, e)).
+
+rules
+
+  typeOfTypeExp : scope * TypeExp ->  Type
+
+  typeOfTypeExp(s, UnitType()) = UNIT().
+
+  typeOfTypeExp(s, NumType()) = NUM().
+
+  typeOfTypeExp(s, FunType(te1, te2)) = FUN(T1, T2) :-
+    typeOfTypeExp(s, te1) == T1,
+    typeOfTypeExp(s, te2) == T2.
+
+rules
+
+  declareVar : scope * ID * Type
+  declareVar(s, x, T) :-
+    s -> Var{x} with typeOfDecl T.
+
+  resolveVar : scope * ID -> Type
+  resolveVar(s, x) = T :- {x'} @x.ref := x',
+    Var{x} in s |-> [(_, (Var{x'}, T))].

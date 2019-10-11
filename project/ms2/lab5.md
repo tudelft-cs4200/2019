@@ -92,6 +92,10 @@ You continue with your work from the previous assignment. See the
 [Git documentation](/documentation/git.html#continue-from-previous-assignment) on
 how to create the `assignment-5-develop` branch from your previous work.
 
+### Example specification
+
+A complete example specification for the simply typed lambda calculus can be found at [STLC](lab5-example.html).
+
 ### Typing rules
 
 Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
