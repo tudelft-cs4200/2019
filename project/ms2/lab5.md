@@ -78,10 +78,9 @@ You have 3 early feedback attempts.
 
 ### Preliminaries
 
-#### Updating Spoofax
-
 For this lab you need to update Spoofax to a new version.
 Follow the instructions in the [Spoofax documentation](/documentation/spoofax.html#updating).
+{: .notice .notice-warning}
 
 #### GitLab Repository
 
