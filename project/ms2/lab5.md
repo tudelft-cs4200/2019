@@ -91,7 +91,7 @@ how to create the `assignment-5-develop` branch from your previous work.
 
 A complete example specification for the simply typed lambda calculus can be found at [STLC](lab5-example.html).
 
-### Typing rules
+### Name binding rules
 
 Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
 the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
@@ -168,7 +168,7 @@ AST, names, types are all terms, Statix is fully typed**
 
 ... sorts ... -->
 
-### Name Binding
+### Name resolution
 
 <!--Modelling name binding in Statix involves the following tasks:
 - Creating scopes and connecting them with appropriate edges
