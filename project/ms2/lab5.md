@@ -81,6 +81,11 @@ You have 3 early feedback attempts.
 
 ### Preliminaries
 
+#### Updating Spoofax
+
+For this lab you need to update Spoofax to a new version.
+Follow the instructions in the [Spoofax documentation](/documentation/spoofax.html#updating).
+
 #### GitLab Repository
 
 You continue with your work from the previous assignment. See the
@@ -223,7 +228,7 @@ In this case, a declaration is then defined using `s -> OCCURRENCE with scopeOf 
 A reference in the scope graph must resolve to a declaration. This is specified with a premise in the shape of a scope graph query. 
 To query for declarations (in the implicit `decl` relation), queries can be formulated as `OCCURRENCE in s |-> ps` which resolve an occurence in scope `s` to `ps`. The latter is a list of pairs of `path`s and the data from the relation (occurrences in this case). 
 
-As usual, the list of results `ps` can be pattern-matched on. For example, to match on a single variable declaration you could write `Var{x@-} in s |-> [(_, Var{x'@_})]`, where `x'` is bound to the name of the original declaration.
+As usual, the list of results `ps` can be pattern-matched on. For example, to match on a single variable declaration you could write `Var{x} in s |-> [(_, Var{x'})]`, where `x'` is bound to the name of the original declaration.
 <!--**Checking duplicate definitions**-->
 
 Queries that resolve in another relation instead (e.g. for `scopeOf` defined above) can be constructed like `relation-name of OCCURRENCE in s |-> ps`.
@@ -258,16 +263,30 @@ To prioritise and disambiguate between multiple well-formed resolution paths we 
 #### Custom errors and warnings
 
 It is possible to control the errors and warnings that are generated if a constraint fails.
+For equalities, resolution constraints and queries, `false`, and predicates, an error can be specified as:
 ```
-constraint | <Severity> <Message> <Location>
+constraint | error <Message> <Location>
 ```
 
-The severity is either an `error` or a `warning`. The message is optional and can be
+The message is optional and can be
 
 1. a literal string `"variable not found"`, or 
 2. a formatted message `$[Cannot find variable [x]]`. 
 
+The message text itself is currently ignored in Spoofax. This will be fixed soon.
+{: .notice .notice-warning}
+
 The default error location is the term matched with the rule, but it can be specified explicitly using `@t`, where `t` is a variable from your rule.
+
+There is a special construct to produce warnings and notes:
+```
+try { constraint } | <Severity> <Message> <Location>
+```
+
+The severity is `error`, `warning` or `note`.
+The `try` constraint tests if the embedded constraint holds in the solution of the original constraint problem.
+However, it cannot influence that solution.
+This ensures that the constraints that produce a warning cannot accidentally cause an error because they instantiated constraint variables.
 
 #### Hiding and overriding
 
@@ -311,12 +330,12 @@ to such full queries.
 As seen before, `REGEX` specifies path well-formedness and `LABELORD` determines the edge label order. Both can override the default specification defined for a namespace.
 
 `MATCH` specifies which data in the relation we want to match.
-For example, to match on a name `x`, the match is an anonymous rule `{ d :- d == Var{x@_} }` which is tested against all the declarations `d` that are reachable.
+For example, to match on a name `x`, the match is an anonymous rule `{ Var{x'} :- x' == x }` which is tested against all the declarations `d` that are reachable.
 
 `SHADOW` determines which declarations shadow each other.
 If it is set to `true`, all declarations shadow each other and we only get the declarations reached via the shortest path.
 If set to `false`, none of the declarations shadow which could be used to find all reachable declarations.
-Alternatively, an anonymous rule like `{ Var{x@_}, Var{x@_} }` could be used to specify we only shadow between things with the same name (and within the same namespace).
+Alternatively, an anonymous rule like `{ Var{x}, Var{x} }` could be used to specify we only shadow between things with the same name (and within the same namespace).
 
 To see the full forms of the shorter queries, 
 you can use `Syntax > Format Normalized` on the Statix specification.
