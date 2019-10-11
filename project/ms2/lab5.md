@@ -101,6 +101,7 @@ the `trans/analysis` directory. The module name at the top of the file should ma
 module analysis/minijava
 ```
 
+#### Predicates
 Type checking is specified using predicates whose rules determine which programs are well-formed and which are not.
 The rules typically match on the syntactic constructs of the language.
 The rule body specifies the premises that must hold for the construct to be well-formed.
@@ -152,10 +153,41 @@ editor-analyze = stx-editor-analyze(
   |"statics", "programOk")
 ```
 
+#### Grammar injections
+A grammar injection (e.g. `Exp = VarRef`) includes all the productions of the right-hand side sort (here `VarRef`) as valid for the left-hand side sort (here `Exp`) without having to wrap them in a named constructor. However, to satisfy the requirements of Statix type checking, auxiliary constructors are introduced that make these injections explicit. 
+
+For example, the above injection (`Exp = VarRef`) is represented by `VarRef -> Exp` in the following snippet of MiniJava signature for expressions in Stratego: 
+
+``` 
+/* Stratego signature */
+signature
+  sorts
+    Exp VarRef ID
+
+  constructors
+    VarRef   : ID -> VarRef
+             : VarRef -> Exp  // injection
+```
+
+but represented with an explicit constructor `VR2E` in the Statix specification:
+
+```
+/* Statix signature */
+signature // expressions
+  sorts
+    Exp VarRef IndexExp
+
+  constructors
+    VarRef    : ID -> VarRef
+    VR2E      : VarRef -> Exp  // explicit injection constructor
+```
+
 For this lab you have to write predicate rules for *all* the constructs in the 
-language. Note that the grammar injections are explicit in this signature 
-(e.g. `VR2E` is an explicit constructor for the injection of `VarRef` to `Exp`), 
-which means you have to wrap some constructors in the injection constructor.
+language, which also means you have to explicitly match on the injection constructors. 
+All the injection constructors you have to use are mentioned in the signature in the provided Statix file.
+
+You can use the `Spoofax > Show AST` or `Spoofax > Show desugared AST` on a MiniJava file to see the the explicit injection constructors in the AST.
+{: .notice .notice-info}
 
 Check the signature provided in the Statix file of the template project to 
 make sure you write rules for all the language constructs.
