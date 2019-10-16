@@ -94,10 +94,10 @@ A complete example specification for the simply typed lambda calculus can be fou
 ### Name binding rules
 
 Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
-the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
+the `trans/analysis` directory. For this assignment the module name at the top of the file should be set to "minijava".
 
 ```
-module analysis/minijava
+module minijava
 ```
 
 #### Predicates
@@ -143,13 +143,16 @@ For example, the `Call` rule may enforce well-formedness of the nested expressio
 The initial project contains a predicate `programOk` with a rule that matches the root AST node of a Mini Java program.
 Type checking proceeds from this rule by matching rules against arguments and unfolding to the premises of matching rules.
 If all premises can be resolved, the program is considered well-formed.
-The predicate that is invoked first in the analysis is specified in the 
-`trans/analysis.str` Stratego file which defines a strategy `str-editor-analyze`.
+The predicate that is invoked first in the analysis is specified by providing 
+its module name and the name of the predicate itself to strategy 
+`stx-editor-analyze` in the Stratego file `trans/analysis.str`. 
+For this lab this is already provided, specifying `programOk` inside module 
+`minijava` as the starting point of the analysis:
 
 ```
 editor-analyze = stx-editor-analyze(
   explicate-injections;desugar-all
-  |"statics", "programOk")
+  |"minijava", "programOk")
 ```
 
 #### Grammar injections
