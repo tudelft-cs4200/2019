@@ -94,12 +94,13 @@ A complete example specification for the simply typed lambda calculus can be fou
 ### Name binding rules
 
 Name binding is specified through name binding and typing rules in a `.stx` file. Statix files must go in
-the `trans/analysis` directory. The module name at the top of the file should match the filename relative to `trans`. For example, the file `trans/analysis/minijava.stx` starts as:
+the `trans/analysis` directory. For this assignment the module name at the top of the file should be set to "minijava".
 
 ```
-module analysis/minijava
+module minijava
 ```
 
+#### Predicates
 Type checking is specified using predicates whose rules determine which programs are well-formed and which are not.
 The rules typically match on the syntactic constructs of the language.
 The rule body specifies the premises that must hold for the construct to be well-formed.
@@ -142,19 +143,56 @@ For example, the `Call` rule may enforce well-formedness of the nested expressio
 The initial project contains a predicate `programOk` with a rule that matches the root AST node of a Mini Java program.
 Type checking proceeds from this rule by matching rules against arguments and unfolding to the premises of matching rules.
 If all premises can be resolved, the program is considered well-formed.
-The predicate that is invoked first in the analysis is specified in the 
-`trans/analysis.str` Stratego file which defines a strategy `str-editor-analyze`.
+The predicate that is invoked first in the analysis is specified by providing 
+its module name and the name of the predicate itself to strategy 
+`stx-editor-analyze` in the Stratego file `trans/analysis.str`. 
+For this lab this is already provided, specifying `programOk` inside module 
+`minijava` as the starting point of the analysis:
 
 ```
 editor-analyze = stx-editor-analyze(
   explicate-injections;desugar-all
-  |"statics", "programOk")
+  |"minijava", "programOk")
+```
+
+#### Grammar injections
+A grammar injection (e.g. `Exp = VarRef`) includes all the productions of the right-hand side sort (here `VarRef`) as valid for the left-hand side sort (here `Exp`) without having to wrap them in a named constructor. However, to satisfy the requirements of Statix type checking, auxiliary constructors are introduced that make these injections explicit. 
+
+For example, the above injection (`Exp = VarRef`) is represented by `VarRef -> Exp` in the following snippet of MiniJava signature for expressions in Stratego: 
+
+``` 
+/* Stratego signature */
+signature
+  sorts
+    Exp VarRef ID
+
+  constructors
+    VarRef   : ID -> VarRef
+             : VarRef -> Exp  // injection
+```
+
+but represented with an explicit constructor `VR2E` in the Statix specification:
+
+```
+/* Statix signature */
+signature // expressions
+  sorts
+    Exp VarRef IndexExp
+
+  constructors
+    VarRef    : ID -> VarRef
+    VR2E      : VarRef -> Exp  // explicit injection constructor
 ```
 
 For this lab you have to write predicate rules for *all* the constructs in the 
-language. Note that the grammar injections are explicit in this signature 
-(e.g. `VR2E` is an explicit constructor for the injection of `VarRef` to `Exp`), 
-which means you have to wrap some constructors in the injection constructor.
+language. If constructs are left uncovered by rules and then encountered in a 
+MiniJava program, Statix analysis will fail.
+This means you have to explicitly match on the injection constructors. 
+All such injection constructors you have to use are mentioned in the signature 
+of the template Statix file.
+
+You can use the `Spoofax > Show AST` or `Spoofax > Show desugared AST` on a MiniJava file to see the the explicit injection constructors in the AST.
+{: .notice .notice-info}
 
 Check the signature provided in the Statix file of the template project to 
 make sure you write rules for all the language constructs.
