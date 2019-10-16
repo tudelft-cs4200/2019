@@ -76,11 +76,6 @@
   context: lectures
   subcontext: statics
 
-- title: Constraint Resolution
-  url: /lectures/statics/constraint-resolution.html
-  context: lectures
-  subcontext: statics
-
 - title: Dataflow Analysis
   url: /lectures/statics/dataflow-analysis.html
   context: lectures
