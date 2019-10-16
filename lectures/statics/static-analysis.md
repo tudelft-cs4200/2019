@@ -32,14 +32,11 @@ In this lecture we discuss the need for type checking, or more broadly, static a
 
 ### Reading Material
 
-- Pierre Néron, Andrew P. Tolmach, Eelco Visser, Guido Wachsmuth. [A Theory of Name Resolution](http://dx.doi.org/10.1007/978-3-662-46669-8_9). In Jan Vitek, editor, Programming Languages and Systems - 24th European Symposium on Programming, ESOP 2015, Held as Part of the European Joint Conferences on Theory and Practice of Software, ETAPS 2015, London, UK, April 11-18, 2015. Proceedings. Volume 9032 of Lecture Notes in Computer Science, pages 205-231, Springer, 2015. This paper introduces the scope graph model for the representation of name binding facts in programs and the resolution calculus to resolve names in scope graphs.
+- Hendrik van Antwerpen, Casper Bach Poulsen, Arjen Rouvoet, Eelco Visser. [Scopes as types](https://doi.org/10.1145/3276484). Proceedings of the ACM on Programming Languages, 2 (OOPSLA), 2018. This paper introduces Statix, a language for writing static semantics specifications.
 
 - Hendrik van Antwerpen, Pierre Néron, Andrew P. Tolmach, Eelco Visser, Guido Wachsmuth. [A constraint language for static semantic analysis based on scope graphs](http://doi.acm.org/10.1145/2847538.2847543). In Martin Erwig, Tiark Rompf, editors, Proceedings of the 2016 ACM SIGPLAN Workshop on Partial Evaluation and Program Manipulation, PEPM 2016, St. Petersburg, FL, USA, January 20 - 22, 2016. pages 49-60, ACM, 2016. This paper develops a constraint language for description of type system using scope graph constraints for the definition of name binding. These constraints are the basis for the NaBL2 language.
 
-- Hendrik van Antwerpen, Casper Bach Poulsen, Arjen Rouvoet, Eelco Visser. [Scopes as types](https://doi.org/10.1145/3276484). Proceedings of the ACM on Programming Languages, 2(OOPSLA), 2018.
-
-- [Static Semantics with NaBL2](http://www.metaborg.org/en/latest/source/langdev/meta/lang/nabl2/index.html). Documentation
-
+- Pierre Néron, Andrew P. Tolmach, Eelco Visser, Guido Wachsmuth. [A Theory of Name Resolution](http://dx.doi.org/10.1007/978-3-662-46669-8_9). In Jan Vitek, editor, Programming Languages and Systems - 24th European Symposium on Programming, ESOP 2015, Held as Part of the European Joint Conferences on Theory and Practice of Software, ETAPS 2015, London, UK, April 11-18, 2015. Proceedings. Volume 9032 of Lecture Notes in Computer Science, pages 205-231, Springer, 2015. This paper introduces the scope graph model for the representation of name binding facts in programs and the resolution calculus to resolve names in scope graphs.
 
 ### Additional Reading Material
 

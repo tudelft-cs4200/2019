@@ -25,6 +25,5 @@ Lectures
 - [Introduction to Static Analysis](static-analysis)
 - [Type Checking](type-checking)
 - [Type Constraints](type-constraints)
-- [Constraint Resolution](constraint-resolution)
 - [Data-Flow Analysis](dataflow-analysis)
 - [Monotone Frameworks](monotone-frameworks)
