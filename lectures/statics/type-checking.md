@@ -16,9 +16,9 @@ In this lecture we study constraint-based static semantic analysis using the sco
 
 ## Slides
 
+- [PDF](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/07-type-checking/CS4200-2019-7-type-checking.pdf)
+- [PDF (w/ animations)](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/07-type-checking/CS4200-2019-7-type-checking-animated.pdf)
 - [PDF 2018](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/07-type-checking/CS4200-2018-7-type-checking.pdf)
-- [PDF 2019](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/07-type-checking/CS4200-2019-7-type-checking.pdf)
-- [PDF 2019 (w/ animations)](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/07-type-checking/CS4200-2019-7-type-checking-animated.pdf)
 - [github](https://github.com/TUDelft-CS4200-2019/lectures/tree/master/07-type-checking)
 
 <iframe src="//www.slideshare.net/slideshow/embed_code/key/xxXCCYh8Iwi2jI" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/eelcovisser/compiler-construction-lecture-7-type-checking" title="Compiler Construction | Lecture 7 | Type Checking" target="_blank">Compiler Construction | Lecture 7 | Type Checking</a> </strong> from <strong><a href="https://www.slideshare.net/eelcovisser" target="_blank">Eelco Visser</a></strong> </div>

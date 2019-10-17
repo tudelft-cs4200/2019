@@ -17,6 +17,7 @@ In this lecture we study constraint-based static semantic analysis using the sco
 ## Slides
 
 - [PDF](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/08-type-constraints/CS4200-2019-8-type-constraints.pdf)
+- [PDF (w/ animations)](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/08-type-constraints/CS4200-2019-8-type-constraints-animated.pdf)
 - [PDF 2018 (1)](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/08-type-constraints/CS4200-2018-8-type-constraints.pdf)
 - [PDF 2018 (2)](https://github.com/TUDelft-CS4200-2019/lectures/raw/master/08-type-constraints/CS4200-2018-9-constraint-resolution.pdf)
 - [github](https://github.com/TUDelft-CS4200-2019/lectures/tree/master/08-type-constraints)
