@@ -383,5 +383,5 @@ you can use `Syntax > Format Normalized` on the Statix specification.
 <!--**Connecting resolution to the AST**-->
 
 To enable name resolution as a service in the editor, we have to link references to the desired declarations.
-This is achieved by defining the `ref` property on AST nodes using the syntax `x.ref := x'`, where `x` is the reference name and `x'` the name matched from the desired declaration in the query result.
+This is achieved by defining the `ref` property on AST nodes using the syntax `@x.ref := x'`, where `x` is the reference name and `x'` the name matched from the desired declaration in the query result.
 
