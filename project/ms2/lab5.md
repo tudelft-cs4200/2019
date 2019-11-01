@@ -219,7 +219,7 @@ AST, names, types are all terms, Statix is fully typed**
 A scope graph is constructed from scopes and edges using the predicates:
 
 * `new s` that introduces a new scope and
-* `s -l-> s'` that links a scope `s` to existing scope `s'` with an edge labelled `l'`
+* `s -l-> s'` that links a scope `s` to existing scope `s'` with an edge labelled `l`
 
 To distinguish between different kinds of scope graph edges, the edge labels 
 must be defined in the signature as a space-separated list:
@@ -295,7 +295,10 @@ it. The regular expressions on labels have the following syntax:
 The default case `P* I*` means that after an import, 
 you cannot look to resolve in a parent scope anymore. 
 
-To prioritise and disambiguate between multiple well-formed resolution paths we define a `specificity ordering` of paths by giving an ordering of edge labels. `LABELORD` is thus a space-separated list of `label1 < label2`. For example, `$ < P` indicates that declaration edges are preferred to parent edges `P`.
+To prioritise and disambiguate between multiple well-formed resolution paths 
+we define a `specificity ordering` of paths by giving an ordering of edge 
+labels. `LABELORD` is thus a *comma-separated* list of `label1 < label2`. 
+For example, `$ < P` indicates that declaration edges are preferred to parent edges `P`.
 
 #### Custom errors and warnings
 
