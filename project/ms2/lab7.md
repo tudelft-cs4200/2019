@@ -24,7 +24,7 @@ See the [update instructions](/documentation/spoofax#updating).
 
 ### Objectives
 
-Specify type analysis for MiniJava in NaBL2. The specification should include:
+Specify type analysis for MiniJava in Statix. The specification should include:
 
 1. Name binding constraints for
   * method calls.
@@ -88,6 +88,10 @@ You continue with your work from the previous assignment. See the
 For the grading to work correctly, you have to pull some changes from the template.
 See the [instructions](/git.html/#pulling-in-changes-from-template) on how to do that.
 {: .notice .notice-info}
+
+### Example specification
+
+A complete example specification for the simply typed lambda calculus can be found at [STLC](lab5-example.html). Furthermore, we would recommend looking at the [Tiger Statix implementation](https://github.com/MetaBorgCube/metaborg-tiger/blob/master/org.metaborg.lang.tiger.statix/trans/static-semantics.stx).
 
 ### Declaring Types
 
