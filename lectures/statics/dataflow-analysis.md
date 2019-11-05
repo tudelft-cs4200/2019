@@ -23,4 +23,5 @@ In this lecture we study control-flow and data-flow as general concepts and how 
 
 ### Reading Material
 
-- Jeff Smits, Eelco Visser. [FlowSpec: declarative dataflow analysis specification](https://doi.org/10.1145/3136014.3136029). In Proceedings of the 10th ACM SIGPLAN International Conference on Software Language Engineering 2017, Vancouver, BC, Canada, October 23 - 24, 2017. pages 221-231, ACM, 2017. This paper presents the FlowSpec language. The main ideas of the language are still the same although some of the syntax has changed.
+- Jeff Smits, Eelco Visser. [FlowSpec: Declarative Dataflow Analysis Specification](https://doi.org/10.1145/3136014.3136029). In Proceedings of the 10th ACM SIGPLAN International Conference on Software Language Engineering 2017, Vancouver, BC, Canada, October 23 - 24, 2017. pages 221-231, ACM, 2017.  
+   This paper presents the FlowSpec language. The main ideas of the language are still the same although some of the syntax has changed.

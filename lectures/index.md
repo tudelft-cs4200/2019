@@ -23,7 +23,7 @@ Q1
 * Thu Sep 26, 10:45-12:30, EWI Boole: [Transformation](transformation/)
 * Thu Oct 3, 10:45-12:30, EWI Boole: [Introduction to Static Analysis](statics/static-analysis)
 * Thu Oct 10, 10:45-12:30, EWI Boole: [Type System Specification with Statix](statics/type-checking)
-* Thu Oct 17, 10:45-12:30, EWI Boole: [Constraint Resolution](statics/constraint-resolution)
+* Thu Oct 17, 10:45-12:30, EWI Boole: [Type Constraints](statics/type-constraints)
 * Thu Oct 24, 10:45-12:30, EWI Boole: no lecture
 * Thu Oct 31, 13:30-16:30, IO-PC hall 2 (CTRL): Exam Q1
 
