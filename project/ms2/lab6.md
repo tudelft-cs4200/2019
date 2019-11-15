@@ -104,7 +104,8 @@ test integer literal type [[
       System.out.println([[1]]);
     }
   }
-]] run get-type on #1 to Int()
+]] analysis succeeds
+   run get-type on #1 to Int()
 
 test variable reference type [[
   class Main {
@@ -126,8 +127,15 @@ test variable reference type [[
       return y;
     }
   }
-]] run get-type on #1 to Bool()
+]] analysis succeeds
+   run get-type on #1 to Bool()
 ```
+
+The test expectation `run get-type` does not imply that there are no type errors.
+However, if there are errors `get-type` usually fails. It is generally a good idea
+to always add an `analysis succeeds` expectation, to ensure the failure of `get-type`
+is not because of errors in the program.
+{: .notice .notice-warning}
 
 You can use _fixtures_ to avoid repeating parts in similar test cases. See the
 [SPT documentation](https://www.metaborg.org/en/latest/source/langdev/meta/lang/spt/test-suites.html#test-fixtures)
