@@ -157,8 +157,40 @@ testing assignments, this assignment is all about the coverage of your test suit
 The constructors for various types are:
 
 - Integer: `INT()`
-- `CLASS("Foo")` and
-the corresponding class `Foo` contains a method declaration for `run()`.
+- Integer array: `INTARRAY()`
+- Boolean: `BOOL()`
+- Class with name Foo: `CLASS("Foo")`
+
+Make sure that there are no errors in tests with a `run x to y` clause. These tests are invalid when
+there are errors.
+{: .notice .notice-warning}
+
+Do not use start symbols other than `Program`.
+{: .notice .notice-warning}
+
+### Testing Method Name Resolution
+
+We did not test method names in assignment 5, since method name resolution requires type analysis.
+Types are available now, so we can test method name resolution.
+Consider the following test case as an example:
+
+```
+test method name resolution [[
+  class Main {
+    public static void main (String[] args) {
+      System.out.println(new Foo().[[run]]());
+    }
+  }
+  class Foo {
+    public int [[run]]() {
+      return 1;
+    }
+  }
+]] resolve #1 to #2
+```
+
+The type of the callee expression determines the class in which the method declaration can be found.
+In this example, the expression `new Foo()` is of type `CLASS("Foo")` and
 
 You should come up with test cases for the resolution of method names.
 Start with simple test cases, but keep in mind that method name resolution is quite complex
