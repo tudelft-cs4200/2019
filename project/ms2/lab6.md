@@ -9,9 +9,6 @@ subcontext: ms2
 
 {% include _toc.html %}
 
-This lab is under construction. Proceed at own risk.
-{: .notice .notice-warning}
-
 In this lab, you develop a test suite for type analysis.
 The test suite consists of type projection test cases, resolution test cases and constraint test cases.
 
@@ -89,8 +86,8 @@ In test cases for type analysis,
  you write syntactically correct programs and
  mark expressions with inner square bracket blocks.
 You can then specify the expected type of the marked expression in a `run x to y` clause.
-For example, the following two test cases require an integer literal to be of type `Int()`
-and a variable reference to be of its declared type `Bool()`:
+For example, the following two test cases require an integer literal to be of type `INT()`
+and a variable reference to be of its declared type `BOOL()`:
 
 ```
 module types
@@ -105,7 +102,7 @@ test integer literal type [[
     }
   }
 ]] analysis succeeds
-   run get-type on #1 to Int()
+   run get-type on #1 to INT()
 
 test variable reference type [[
   class Main {
@@ -128,7 +125,7 @@ test variable reference type [[
     }
   }
 ]] analysis succeeds
-   run get-type on #1 to Bool()
+   run get-type on #1 to BOOL()
 ```
 
 The test expectation `run get-type` does not imply that there are no type errors.
@@ -141,9 +138,7 @@ You can use _fixtures_ to avoid repeating parts in similar test cases. See the
 [SPT documentation](https://www.metaborg.org/en/latest/source/langdev/meta/lang/spt/test-suites.html#test-fixtures)
 for details.
 
-When applying `get-type` to objects, we expect a `ClassType` constructor, which takes an
-*occurrence* as an argument. Remember that an occurrence was `<Namespace>{<Name>}`, but in our test
-we need to write out the constructor for it, like this:
+When applying `get-type` to objects, we expect a `CLASS` constructor, which takes a scope as its argument. This will be automatically transformed to the name of the class when testing:
 
 ```
 test expression id type [[
@@ -161,23 +156,18 @@ test expression id type [[
       return [[x]];
     }
   }
-]] run get-type on #1 to ClassType(Occurrence(_,"Foo",_))
+]] run get-type on #1 to CLASS("Foo")
 ```
-
-Do not use the `Occurrence` constructor in your NaBL2 specification! It is partof the _internal_
-representation of occurrences. In your NaBL2 rules, you should only use the special `Ns{x}` syntax.
-We only use the internal constructor in tests because the special syntax is not available in SPT.
-{: .notice .notice-warning}
 
 You should come up with test cases for the types of all kinds of expressions. Just like previous
 testing assignments, this assignment is all about the coverage of your test suite.
 
 The constructors for various types are:
 
-- Integer: `Int()`
-- Boolean: `Bool()`
-- Integer array: `IntArray()`
-- Class with name Foo: `ClassType(Occurrence(_,"Foo",_))`
+- Integer: `INT()`
+- Integer array: `INTARRAY()`
+- Boolean: `BOOL()`
+- Class with name Foo: `CLASS("Foo")`
 
 Make sure that there are no errors in tests with a `run x to y` clause. These tests are invalid when
 there are errors.
@@ -199,7 +189,6 @@ test method name resolution [[
       System.out.println(new Foo().[[run]]());
     }
   }
-
   class Foo {
     public int [[run]]() {
       return 1;
@@ -209,8 +198,7 @@ test method name resolution [[
 ```
 
 The type of the callee expression determines the class in which the method declaration can be found.
-In this example, the expression `new Foo()` is of type `ClassType(Occurrence(_,"Foo",_))` and
-the corresponding class `Foo` contains a method declaration for `run()`.
+In this example, the expression `new Foo()` is of type `CLASS("Foo")` and
 
 You should come up with test cases for the resolution of method names.
 Start with simple test cases, but keep in mind that method name resolution is quite complex
