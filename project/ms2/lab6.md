@@ -190,7 +190,7 @@ test method name resolution [[
 ```
 
 The type of the callee expression determines the class in which the method declaration can be found.
-In this example, the expression `new Foo()` is of type `CLASS("Foo",_))` and
+In this example, the expression `new Foo()` is of type `CLASS("Foo")` and
 
 You should come up with test cases for the resolution of method names.
 Start with simple test cases, but keep in mind that method name resolution is quite complex
