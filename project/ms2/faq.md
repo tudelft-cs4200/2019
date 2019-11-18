@@ -56,3 +56,27 @@ There are several possible reasons why your tests do not work.
 
 Protip: writing small example programs of the case you are investigating can be a quick way to see
 if your implementation behaves the way you expect.
+
+### Why does `get-type` fail?
+
+If `get-type` fails when using the `run get-type` test expectation, it prints some debug information
+to the console that may help to resolve the problem.
+
+If the console output says `get-type: no analysis for node ...`:
+
+1. The program may have type errors. The `run get-type` expectation does _not_ imply that the program
+   is error free. Add a `analysis succeeds` before the`run get-type` to ensure there are no errors.
+   
+If the console output says `get-type: no type on node ...`:
+
+1. Types may not be correctly associated with the AST nodes (using `@e.type := T`). See the lab
+   description on how to do this.
+1. The strategy may be run on the wrong part of the AST. Check that the node in the console error is
+   the node that should have the type. For example, maybe `get-type` must be applied to a selection
+   (with `run get-type on #1 to ...`) instead of on the whole fragment (with `run get-type to ...`).
+
+If the console output says `get-type: no className on scope ...`:
+
+1. The `className` relation may not be defined, or entries are not added (see lab description for details).
+1. The `className` entries may be associated with the wrong scope. Ensure you add the `className` to the
+   class scope, the one used in the class type.
