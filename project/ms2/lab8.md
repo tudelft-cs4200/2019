@@ -13,6 +13,10 @@ In this lab, you define a simple data-flow analysis for MiniJava in FlowSpec. Th
 
 - Jeff Smits, Eelco Visser. FlowSpec: declarative dataflow analysis specification. In Benoît Combemale, Marjan Mernik, Bernhard Rumpe, editors, Proceedings of the 10th ACM SIGPLAN International Conference on Software Language Engineering, SLE 2017, Vancouver, BC, Canada, October 23-24, 2017. pages 221-231, ACM, 2017.
 
+Update your Spoofax installation for this lab!
+See the [update instructions](/documentation/spoofax#updating).
+{: .notice .notice-danger}
+
 Documentation for FlowSpec can be found online at
 [FlowSpec Documentation](http://www.metaborg.org/en/latest/source/langdev/meta/lang/flowspec/index.html). For
 a complete overview of the language, use the
