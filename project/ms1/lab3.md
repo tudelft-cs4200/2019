@@ -154,8 +154,8 @@ In case you do not see any outline view, you can select it in *Show View* from E
 
 In Stratego, we use the following naming conventions:
 
-* constructor and sort names: camel case, starting with an upper case (e.g. `Add`, `BinExp`)
-* rule names, strategy names, variable names: lower case, multiple words separated by `-` (e.g. `e1`, `project-path`)
+* constructor and sort names: Pascal case / upper camel case (e.g. `Add`, `BinExp`, `IntArrayConstructor`)
+* rule names, strategy names, variable names: kebab case (e.g. `e1`, `project-path`, `suggest-completions-left-rec`)
 
 #### String Interpolation
 
