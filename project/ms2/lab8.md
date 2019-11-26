@@ -200,7 +200,7 @@ We use this analysis to detect whether variables are initialized before they are
 
 Your analysis should work on a set of pairs, this is what the grading code expects (`Set(name * Option(position))`). The first part of the pair is the name. The second part of the pair is a `Option(position)` where the assignment took place. An option can be `None()` or `Some(position(astnode))`, using the built-in `position` function. 
 
-A name is constructed with NaBL2 syntax (`namespace { occurrence }`). FlowSpec does not differentiate between declarations and references, names are normalized to their definitions. You can construct pairs with parentheses and commas as usual: `(nameexpr, optionexpr)`. 
+A name is constructed with NaBL2/Statix syntax (`namespace { occurrence }`). FlowSpec does not differentiate between declarations and references, names are normalized to their definitions. You can construct pairs with parentheses and commas as usual: `(nameexpr, optionexpr)`. 
 
 Consider what should happen to the data at a merge of control-flow. This indicates whether you should use the `MaySet` or the `MustSet` lattice. 
 
@@ -209,26 +209,17 @@ For the reaching definitions data-flow analysis, we require you to name your ana
 
 ### Error messages
 
-Once you have finished your data-flow analysis, you can use it to generate error messages. [NaBL2 allows you to hook into the analysis and create extra errors, warnings and notes](http://www.metaborg.org/en/latest/source/langdev/meta/lang/nabl2/stratego-api.html#custom-analysis). In this case we add FlowSpec analysis based on the name analysis results, and then we query the analysis results to construct error messages:
+Once you have finished your data-flow analysis, you can use it to generate error messages. We have already provided code in the template that combines the name and flow analyses and gives you access to the resulting analysis object. This analysis object in variable `a` can be queried with the [FlowSpec Stratego API](https://www.metaborg.org/en/latest/source/langdev/meta/lang/flowspec/stratego-api.html) to access the analysis results.
 
-```
-  nabl2-custom-analysis-unit-hook:
-    (_, ast, _) -> ast
-
-  nabl2-custom-analysis-final-hook(|a):
-    (_, _, asts) -> (errors, warnings, notes, a2)
-    with <nabl2-custom-analysis-info(|"Running FlowSpec for more errors")> a
-       ; a2 := <flowspec-analyze(|a)> asts
-       ; errors   := <error-uninitialized(|a2)> asts
-       ; warnings := []
-       ; notes    := []
-```
-
-To get the ast in the final phase, we pass it along in the unit phase. We use `flowspec-analyze(|a)` to execute the FlowSpec analysis on top of the NaBL2 analysis `a`, and receive the combined scope graph, control-flow graph and data-flow properties in `a2`. We pass this information to strategy `error-uninitialized`. This strategy should give back a list of pairs, the first being the ast node to put the error on, the second a string to display. 
-
-Implement `error-uninitialized` so that error messages are displayed on every use of a variable or parameter where that variable or parameter _may_ be uninitialized. 
+The strategy `error-uninitialized` remains for you to implement. This strategy should give back a list of pairs, the first being the ast node to put the error on, the second a string to display. Implement `error-uninitialized` so that error messages are displayed on every use of a variable or parameter where that variable or parameter _may_ be uninitialized. 
 
 Note that [there are data helpers strategies for FlowSpec](http://www.metaborg.org/en/latest/source/langdev/meta/lang/flowspec/stratego-api.html#flowspec-data-helpers). 
+{: .notice .notice-info}
+
+`error-uninitialized` receives a list of ASTs of all the files in the project. The easiest way to deal with this is just to process everything. A handy strategy for this is [collect-all](https://stratego.martijndwars.nl/module/strategy/collect#collect-all(s)). 
+{: .notice .notice-info}
+
+You can skip ahead to the next lab for some tips about using and debugging Stratego code.  
 {: .notice .notice-info}
 
 ### Challenge
