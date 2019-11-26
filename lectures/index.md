@@ -33,8 +33,8 @@ Q2
 * Wed Nov 20, 15:45-17:30, EWI Boole: [Monotone Frameworks](statics/monotone-frameworks)
 * Wed Nov 27, 15:45-17:30, EWI Boole: [Virtual Machines](dynamics/virtual-machines)
 * Wed Dec 4, 15:45-17:30, EWI Boole: [Code Generation](dynamics/code-generation)
-* Wed Dec 11, 15:45-17:30, EWI Boole: [Interpreters](dynamics/interpreters)
-* Wed Dec 18, 15:45-17:30, EWI Boole: [Memory Management](dynamics/memory-management)
+* Wed Dec 11, 15:45-17:30, EWI Boole: [Memory Management](dynamics/memory-management)
+* Wed Dec 18, 15:45-17:30, EWI Boole: [Interpreters](dynamics/interpreters)
 * Wed Jan 8, 15:45-17:30, EWI Boole: Guest Lecture Guido Wachsmuth
 * Wed Jan 15, 15:45-17:30, EWI Boole: [Beyond Compiler Construction](applications/conclusion)
 * Fri Jan 31, 13:30-16:30, IO-PC hall 3 (SHIFT): Exam Q2
@@ -61,8 +61,8 @@ Q2
 * Tue Nov 20, 10:45-12:30, CT-CZ D: [Monotone Frameworks](statics/monotone-frameworks)
 * Tue Nov 27, 10:45-12:30, CT-CZ D: [Virtual Machines](dynamics/virtual-machines)
 * Tue Dec 4, 10:45-12:30, CT-CZ D: [Code Generation](dynamics/code-generation)
-* Tue Dec 11, 10:45-12:30, CT-CZ D: [Memory Management](dynamics/memory-management)
-* Tue Dec 18, 10:45-12:30, CT-CZ D: [Interpreters](dynamics/interpreters)
+* Tue Dec 11, 10:45-12:30, CT-CZ D: [Interpreters](dynamics/interpreters)
+* Tue Dec 18, 10:45-12:30, CT-CZ D: [Memory Management](dynamics/memory-management)
 * Tue Jan 8, 10:45-12:30, CT-CZ D: [Domain-Specific Languages for Parallel Graph AnalytiX (PGX)](applications/graph-analytix) Guest lecture Guido Wachsmuth
 * Tue Jan 15, 10:45-12:30, CT-CZ D: [Beyond Compiler Construction](applications/conclusion)
 * Tue, Jan 29, 18:30-21:30, DW-IZ 1: Exam Q3
