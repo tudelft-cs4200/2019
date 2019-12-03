@@ -208,6 +208,8 @@ For the reaching definitions data-flow analysis, we require you to name your ana
 
 Once you have finished your data-flow analysis, you can use it to generate error messages. We have already provided code in the template that combines the name and flow analyses and gives you access to the resulting analysis object. This analysis object in variable `a` can be queried with the [FlowSpec Stratego API](https://www.metaborg.org/en/latest/source/langdev/meta/lang/flowspec/stratego-api.html) to access the analysis results.
 
+Note that FlowSpec uses _normalised_ names in its results. Therefore when you look up a name with the Stratego API, you should also construct an occurrence from the name you pick out of the AST and resolve it to its definition. Skip ahead to [lab 10](https://tudelft-cs4200-2019.github.io/project/ms3/lab10.html#interaction-with-name-and-type-information) for information on how to do this. The analysis information object `a` in those examples is already available to you. Also have a look at the [testing and debugging tips for Stratego code from lab 9](https://tudelft-cs4200-2019.github.io/project/ms3/lab9.html#testing-and-debugging). 
+
 The strategy `error-uninitialized` remains for you to implement. This strategy should give back a list of pairs, the first being the ast node to put the error on, the second a string to display. Implement `error-uninitialized` so that error messages are displayed on every use of a variable or parameter where that variable or parameter _may_ be uninitialized. 
 
 Note that [there are data helpers strategies for FlowSpec](http://www.metaborg.org/en/latest/source/langdev/meta/lang/flowspec/stratego-api.html#flowspec-data-helpers). 
