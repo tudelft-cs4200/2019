@@ -32,7 +32,7 @@ In this lab, you extend your code generator to handle expressions, statements, m
 You need to submit your MiniJava project with a merge request against branch `assignment-10-submission` on GitLab.
 The [Git documentation](/documentation/git.html#submitting-an-assignment) explains how to file such a request.
 
-The deadline for submissions is December 21, 2019, 23:59. The extended deadline is January 11, 2019, 23:59, for a penalty of 1 point.
+The deadline for submissions is December 21, 2019, 23:59. The extended deadline is January 11, 2020, 23:59, for a penalty of 1 point.
 {: .notice .notice-warning}
 
 ### Grading
