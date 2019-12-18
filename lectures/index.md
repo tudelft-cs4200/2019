@@ -33,8 +33,8 @@ Q2
 * Wed Nov 20, 15:45-17:30, EWI Boole: [Monotone Frameworks](statics/monotone-frameworks)
 * Wed Nov 27, 15:45-17:30, EWI Boole: [Virtual Machines](dynamics/virtual-machines)
 * Wed Dec 4, 15:45-17:30, EWI Boole: [Code Generation](dynamics/code-generation)
-* Wed Dec 11, 15:45-17:30, EWI Boole: [Memory Management](dynamics/memory-management)
-* Wed Dec 18, 15:45-17:30, EWI Boole: [Interpreters](dynamics/interpreters)
+* Wed Dec 11, 15:45-17:30, EWI Boole: canceled
+* Wed Dec 18, 15:45-17:30, EWI Boole: [Memory Management](dynamics/memory-management)
 * Wed Jan 8, 15:45-17:30, EWI Boole: Guest Lecture Guido Wachsmuth
 * Wed Jan 15, 15:45-17:30, EWI Boole: [Beyond Compiler Construction](applications/conclusion)
 * Fri Jan 31, 13:30-16:30, IO-PC hall 3 (SHIFT): Exam Q2
