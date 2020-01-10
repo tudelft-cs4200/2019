@@ -78,7 +78,7 @@ Improve your programs until they run without errors.
 To ease code generation of parameters and local variables, we have desugared MiniJava programs and made additional name and type information available:
 
 - We desugared `Param(t,n)` to `Bind(i, Param(t,n))` and `Var(t,n)` to `Bind(i, Var(t,n))`.
-- The occurrence of a parameter/variable declaration has a property `index`, where parameters have index `0`, ..., `n` and variables have index `n+1`, ..., `m`.
+- The occurrence of a parameter/variable declaration has a property `index`, where parameters have index `1`, ..., `n` and variables have index `n+1`, ..., `m` in non-static methods.
 - The occurrence of a variable declaration has a property `origin` with the value `Local()`.
 - The occurrence of a parameter declaration has a property `origin` with the value `Param()`.
 - The occurrence of a field declaration has a property `origin` with the value `Field()`.
